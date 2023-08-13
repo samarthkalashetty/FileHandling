@@ -1,57 +1,75 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 
 class Contact
 {
     public string Name { get; set; }
     public string PhoneNumber { get; set; }
     public string Email { get; set; }
-
-    public override bool Equals(object obj)
-    {
-        if (obj == null || GetType() != obj.GetType())
-        {
-            return false;
-        }
-
-        Contact otherContact = (Contact)obj;
-        return Name.Equals(otherContact.Name, StringComparison.OrdinalIgnoreCase);
-    }
-
-    public override int GetHashCode()
-    {
-        return Name.GetHashCode();
-    }
 }
 
 class Program
 {
     static void Main(string[] args)
     {
-        List<Contact> addressBook = new List<Contact>();
+        List<Contact> addressBook = new List<Contact>
+        {
+            new Contact { Name = "Alice", PhoneNumber = "123-456-7890", Email = "alice@example.com" },
+            new Contact { Name = "Bob", PhoneNumber = "987-654-3210", Email = "bob@example.com" }
+        };
 
-        AddContact(addressBook, "Alice", "123-456-7890", "alice@example.com");
-        AddContact(addressBook, "Bob", "987-654-3210", "bob@example.com");
-        AddContact(addressBook, "Alice", "111-222-3333", "newalice@example.com"); // Duplicate entry
+        string filePath = "addressbook.txt";
 
-        foreach (Contact contact in addressBook)
+        // Write address book to file
+        WriteToFile(addressBook, filePath);
+
+        // Read address book from file
+        List<Contact> readAddressBook = ReadFromFile(filePath);
+
+        // Display the read contacts
+        foreach (Contact contact in readAddressBook)
         {
             Console.WriteLine($"Name: {contact.Name}, Phone: {contact.PhoneNumber}, Email: {contact.Email}");
         }
     }
 
-    static void AddContact(List<Contact> addressBook, string name, string phoneNumber, string email)
+    static void WriteToFile(List<Contact> contacts, string filePath)
     {
-        Contact newContact = new Contact { Name = name, PhoneNumber = phoneNumber, Email = email };
+        using (StreamWriter writer = new StreamWriter(filePath))
+        {
+            foreach (Contact contact in contacts)
+            {
+                writer.WriteLine($"{contact.Name},{contact.PhoneNumber},{contact.Email}");
+            }
+        }
 
-        if (!addressBook.Contains(newContact))
+        Console.WriteLine("Address book written to file.");
+    }
+
+    static List<Contact> ReadFromFile(string filePath)
+    {
+        List<Contact> addressBook = new List<Contact>();
+
+        using (StreamReader reader = new StreamReader(filePath))
         {
-            addressBook.Add(newContact);
-            Console.WriteLine("Contact added successfully.");
+            string line;
+            while ((line = reader.ReadLine()) != null)
+            {
+                string[] parts = line.Split(',');
+                if (parts.Length == 3)
+                {
+                    addressBook.Add(new Contact
+                    {
+                        Name = parts[0],
+                        PhoneNumber = parts[1],
+                        Email = parts[2]
+                    });
+                }
+            }
         }
-        else
-        {
-            Console.WriteLine("Duplicate contact. Not added.");
-        }
+
+        Console.WriteLine("Address book read from file.");
+        return addressBook;
     }
 }
