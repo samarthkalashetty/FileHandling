@@ -1,10 +1,9 @@
-﻿
-using System;
+﻿using System;
 using System.Collections.Generic;
 
 namespace AddressBookApp
 {
-    class Contact
+    class contact
     {
         public string FirstName { get; set; }
         public string LastName { get; set; }
@@ -25,6 +24,45 @@ namespace AddressBookApp
             contacts.Add(contact);
         }
 
+        public void EditContact(string firstName, string lastName)
+        {
+            Contact contact = FindContact(firstName, lastName);
+            if (contact != null)
+            {
+                Console.WriteLine($"Editing contact: {contact.FirstName} {contact.LastName}");
+                Console.Write("Enter new Address: ");
+                contact.Address = Console.ReadLine();
+
+                Console.Write("Enter new City: ");
+                contact.City = Console.ReadLine();
+
+                Console.Write("Enter new State: ");
+                contact.State = Console.ReadLine();
+
+                Console.Write("Enter new Zip: ");
+                contact.Zip = Console.ReadLine();
+
+                Console.Write("Enter new Phone Number: ");
+                contact.PhoneNumber = Console.ReadLine();
+
+                Console.Write("Enter new Email: ");
+                contact.Email = Console.ReadLine();
+
+                Console.WriteLine("Contact edited successfully.");
+            }
+            else
+            {
+                Console.WriteLine("Contact not found.");
+            }
+        }
+
+        private Contact FindContact(string firstName, string lastName)
+        {
+            return contacts.Find(contact =>
+                contact.FirstName.Equals(firstName, StringComparison.OrdinalIgnoreCase) &&
+                contact.LastName.Equals(lastName, StringComparison.OrdinalIgnoreCase));
+        }
+
         public void DisplayContacts()
         {
             Console.WriteLine("Contacts in Address Book:");
@@ -39,51 +77,23 @@ namespace AddressBookApp
         }
     }
 
-    class AddressBookMain
+    class Program
     {
         static void Main(string[] args)
         {
             AddressBook addressBook = new AddressBook();
 
+            // Adding some contacts (you can add more contacts here)
+
             Console.WriteLine("Welcome to Address Book");
-            Console.Write("Enter First Name: ");
-            string firstName = Console.ReadLine();
 
-            Console.Write("Enter Last Name: ");
-            string lastName = Console.ReadLine();
+            Console.Write("Enter the first name of the contact to edit: ");
+            string editFirstName = Console.ReadLine();
 
-            Console.Write("Enter Address: ");
-            string address = Console.ReadLine();
+            Console.Write("Enter the last name of the contact to edit: ");
+            string editLastName = Console.ReadLine();
 
-            Console.Write("Enter City: ");
-            string city = Console.ReadLine();
-
-            Console.Write("Enter State: ");
-            string state = Console.ReadLine();
-
-            Console.Write("Enter Zip: ");
-            string zip = Console.ReadLine();
-
-            Console.Write("Enter Phone Number: ");
-            string phoneNumber = Console.ReadLine();
-
-            Console.Write("Enter Email: ");
-            string email = Console.ReadLine();
-
-            Contact newContact = new Contact
-            {
-                FirstName = firstName,
-                LastName = lastName,
-                Address = address,
-                City = city,
-                State = state,
-                Zip = zip,
-                PhoneNumber = phoneNumber,
-                Email = email
-            };
-
-            addressBook.AddContact(newContact);
-            Console.WriteLine("Contact added successfully.");
+            addressBook.EditContact(editFirstName, editLastName);
 
             addressBook.DisplayContacts();
         }
